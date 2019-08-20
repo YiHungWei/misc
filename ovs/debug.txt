@@ -1,0 +1,26 @@
+# Some useful commands for debugging OVS
+
+# Disable rate limit
+ovs-appctl vlog/disable-rate-limit
+
+# Enable rate limit
+ovs-appctl vlog/enable-rate-limit
+
+# To debug dpif
+ovs-appctl vlog/set dpif:dbg
+
+# To debug OpenFlow messages
+ovs-appctl vlog/set vconn:dbg
+
+# List datapath flows
+ovs-dpctl dump-flows
+
+# Summarize datapath stats, and list datapath ports
+ovs-dpctl show
+
+# Summarize vswitchd config
+ovs-vsctl show
+
+# OpenFlow switch
+ovs-ofctl show br0
+ovs-ofctl dump-flows br0
