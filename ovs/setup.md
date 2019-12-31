@@ -52,3 +52,36 @@ $ ovs-ofctl show br0
 ```
 $ /usr/local/share/openvswitch/scripts/ovs-ctl stop
 ```
+
+# Testing with namespace
+This following commands adds two namespaces for testing.
+```
+$ ip netns add ns0
+$ ip netns add ns1
+```
+
+Sets up p0 in ns0
+```
+$ ip link add p0 type veth peer name ovs-p0
+$ ip link set p0 netns ns0
+$ ip link set dev ovs-p0 up
+$ ovs-vsctl add-port br0 ovs-p0 -- set interface ovs-p0 ofport_request=1
+
+$ ip netns exec ns0 bash << NS_EXEC_EOF
+$ ip addr add 192.168.1.1/24 dev p0
+$ ip link set dev p0 up
+$ NS_EXEC_EOF
+```
+
+Set up p1 in ns1
+```
+$ ip link add p1 type veth peer name ovs-p1
+$ ip link set p1 netns ns1
+$ ip link set dev ovs-p1 up
+$ ovs-vsctl add-port br0 ovs-p1 -- set interface ovs-p0 ofport_request=2
+
+$ ip netns exec ns1 bash << NS_EXEC_EOF
+$ ip addr add 192.168.1.2/24 dev p1
+$ ip link set dev p1 up
+$ NS_EXEC_EOF
+```
